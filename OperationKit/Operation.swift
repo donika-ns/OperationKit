@@ -170,7 +170,9 @@ extension Operation {
         conditions.append(condition)
     }
     public final func produceOperation(operation: NSOperation) {
-        
+        for observer in observers {
+            observer.operation(self, didProduceOperation: operation)
+        }
     }
     public final func cancelWithError(error: NSError? = nil) {
         if let error = error {

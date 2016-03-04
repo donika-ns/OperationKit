@@ -33,7 +33,7 @@ extension BlockObserver: OperationObserver {
     public func operationDidStart(operation: Operation) {
         startHandler?(operation)
     }
-    public func operation(operation: Operation, didProduceOperation newOperation: Operation) {
+    public func operation(operation: Operation, didProduceOperation newOperation: NSOperation) {
         produceHandler?(operation: operation, newOperation: newOperation)
     }
     public func operationDidFinish(operation: Operation) {

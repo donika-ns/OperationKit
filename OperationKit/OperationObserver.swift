@@ -26,7 +26,7 @@ public protocol OperationObserver {
      - parameter operation:    current Operation
      - parameter newOperation: newOperation that `operation` produce.
      */
-    func operation(operation: Operation, didProduceOperation newOperation: Operation)
+    func operation(operation: Operation, didProduceOperation newOperation: NSOperation)
     
     /**
      Invoce as an Operation finishes

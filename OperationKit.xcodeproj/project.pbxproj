@@ -93,6 +93,7 @@
 				5C7EB8B81C7CF89E00806FBE /* OperationQueue.swift */,
 				5C4A7D231C89D03600DAED26 /* ExclusivityController.swift */,
 				5C7EB8B61C7CEF5B00806FBE /* OperationErrors.swift */,
+				5C4A7D271C89D0CF00DAED26 /* AlertOperation.swift */,
 				5C4A7D291C89D0E500DAED26 /* Conditions */,
 				5C7EB8B21C7CE9F600806FBE /* Observers */,
 				5C43E0B71C7C5B7200A7A966 /* Resources */,
@@ -114,7 +115,6 @@
 			children = (
 				5C7EB8B31C7CEA1200806FBE /* OperationCondition.swift */,
 				5C4A7D251C89D09400DAED26 /* MutuallyExclusive.swift */,
-				5C4A7D271C89D0CF00DAED26 /* AlertOperation.swift */,
 			);
 			name = Conditions;
 			sourceTree = "<group>";

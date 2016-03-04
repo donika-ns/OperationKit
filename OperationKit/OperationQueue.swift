@@ -14,6 +14,15 @@ public class OperationQueue: NSOperationQueue {
     public override func addOperation(op: NSOperation) {
         if let op = op as? Operation {
             
+            let delegate = BlockObserver(
+                startHandler: nil,
+                produceHandler: { [weak self] in
+                    self?.addOperation($1)
+                },
+                finishHandler: nil
+            )
+            op.addObserver(delegate)
+            
             // Extract any dependencies needed by this operation.
             var dependencies: [NSOperation] = []
             for condition in op.conditions {
