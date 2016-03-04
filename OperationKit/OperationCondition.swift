@@ -13,6 +13,12 @@ public protocol OperationCondition {
     
     static var name: String { get }
     
+//    /**
+//     Specifies whether multiple instances of the conditionalized operation may
+//     be executing simultaneously.
+//     */
+    static var isMutuallyExclusive: Bool { get }
+    
     func dependencyForOperation(operation: Operation) -> NSOperation?
     
     func evaluateForOperation(operation: Operation, completion: OperationConditionResult -> Void)

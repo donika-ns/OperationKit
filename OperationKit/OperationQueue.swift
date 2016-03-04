@@ -29,6 +29,28 @@ public class OperationQueue: NSOperationQueue {
             }
             
             /*
+                With condition dependencies added, we can now see if this needs
+                dependencies to enforce mutual exclusivity.
+            */
+
+            let concurrencyCategories: [String] = op.conditions.flatMap { condition in
+                if !condition.dynamicType.isMutuallyExclusive { return nil }
+                
+                return "\(condition.dynamicType)"
+            }
+            
+            if !concurrencyCategories.isEmpty {
+                // Set up the mutual exclusivity dependencies.
+                let exclusivityController = ExclusivityController.sharedExclusivityController
+                
+                exclusivityController.addOperation(op, categories: concurrencyCategories)
+                
+                op.addObserver(BlockObserver { operation in
+                    exclusivityController.removeOperation(operation, categories: concurrencyCategories)
+                })
+            }
+            
+            /*
                 Indicate to the operation that we've finished our extra work on it
                 and it's now it a state where it can proceed with evaluating conditions,
                 if appropriate.
