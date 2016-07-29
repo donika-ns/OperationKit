@@ -9,10 +9,12 @@
 import Foundation
 
 
-public class OperationQueue: NSOperationQueue {
+public class OKOperationQueue: OperationQueue {
     
-    public override func addOperation(op: NSOperation) {
-        if let op = op as? Operation {
+    
+    
+    public override func addOperation(_ op: Operation) {
+        if let op = op as? OKOperation {
             
             let delegate = BlockObserver(
                 startHandler: nil,
@@ -24,7 +26,7 @@ public class OperationQueue: NSOperationQueue {
             op.addObserver(delegate)
             
             // Extract any dependencies needed by this operation.
-            var dependencies: [NSOperation] = []
+            var dependencies: [Operation] = []
             for condition in op.conditions {
                 if let dependency = condition.dependencyForOperation(op) {
                     dependencies.append(dependency)
@@ -70,7 +72,7 @@ public class OperationQueue: NSOperationQueue {
         super.addOperation(op)
     }
     
-    public override func addOperations(ops: [NSOperation], waitUntilFinished wait: Bool) {
+    public override func addOperations(_ ops: [Operation], waitUntilFinished wait: Bool) {
         /*
             The base implementation of this method does not call `addOperation()`,
             so we'll call it ourselves.

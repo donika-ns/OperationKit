@@ -10,49 +10,49 @@ import Foundation
 
 
 /// Abstract: 
-public class Operation: NSOperation {
+public class OKOperation: Operation {
     
     // MARK: - State Management
     
     enum State: Int, Comparable {
-        case Initialized, Pending, EvaluatingConditions, Ready, Executing, Finished, Cancelled
+        case initialized, pending, evaluatingConditions, ready, executing, finished, cancelled
         
         var keyPath: String {
             switch self {
-            case .Ready:
+            case .ready:
                 return "isReady"
-            case .Executing:
+            case .executing:
                 return "isExecuting"
-            case .Finished:
+            case .finished:
                 return "isFinished"
-            case .Cancelled:
+            case .cancelled:
                 return "isCancelled"
             default: return ""
             }
         }
     }
-    private var _state = State.Initialized
+    private var _state = State.initialized
     private var state: State {
         get {
             return _state
         }
         
         set(newState) {
-            willChangeValueForKey(_state.keyPath)
-            willChangeValueForKey(newState.keyPath)
+            willChangeValue(forKey: _state.keyPath)
+            willChangeValue(forKey: newState.keyPath)
             
             switch (_state, newState) {
-            case (.Cancelled, _):
+            case (.cancelled, _):
                 break // cannot change state after beeing cancelled
-            case (.Finished, _):
+            case (.finished, _):
                 break // cannot change state after beeing finished
             default:
                 assert(_state != newState, "Trying to apply the same state(\(newState)) again.")
                 _state = newState
             }
             
-            didChangeValueForKey(_state.keyPath)
-            didChangeValueForKey(newState.keyPath)
+            didChangeValue(forKey: _state.keyPath)
+            didChangeValue(forKey: newState.keyPath)
         }
     }
     
@@ -69,29 +69,29 @@ public class Operation: NSOperation {
 
 // MARK: - Override properties
 
-extension Operation {
+extension OKOperation {
     
-    public override var ready: Bool {
+    public override var isReady: Bool {
         switch state {
-        case .Pending:
-            if super.ready {
+        case .pending:
+            if super.isReady {
                 evaluateConditions()
             }
             
             return false
-        case .Ready:
-            return super.ready
+        case .ready:
+            return super.isReady
         default: return false
         }
     }
-    public override var executing: Bool {
-        return state == .Executing
+    public override var isExecuting: Bool {
+        return state == .executing
     }
-    public override var finished: Bool {
-        return state == .Finished
+    public override var isFinished: Bool {
+        return state == .finished
     }
-    public override var cancelled: Bool {
-        return state == .Cancelled
+    public override var isCancelled: Bool {
+        return state == .cancelled
     }
 }
 
@@ -99,12 +99,12 @@ extension Operation {
 
 // MARK: - Override functions
 
-extension Operation {
+extension OKOperation {
     
     public override final func start() {
-        assert(state == .Ready, "This operation must be performed on an operation queue.")
+        assert(state == .ready, "This operation must be performed on an operation queue.")
         
-        state = .Executing
+        state = .executing
         
         for obs in observers {
             obs.operationDidStart(self)
@@ -117,8 +117,8 @@ extension Operation {
         
         finish()
     }
-    public override func addDependency(op: NSOperation) {
-        assert(state <= .Executing, "Dependencies cannot be modified after execution has begun.")
+    public override func addDependency(_ op: Operation) {
+        assert(state <= .executing, "Dependencies cannot be modified after execution has begun.")
         
         super.addDependency(op)
     }
@@ -130,23 +130,23 @@ extension Operation {
 
 // MARK: - Private API
 
-extension Operation {
+extension OKOperation {
     
     func willEnqueue() {
-        state = .Pending
+        state = .pending
     }
     private func evaluateConditions() {
-        assert(state == .Pending, "evaluateConditions() was called out-of-order")
+        assert(state == .pending, "evaluateConditions() was called out-of-order")
         
-        state = .EvaluatingConditions
+        state = .evaluatingConditions
         
         OperationConditionEvaluator.evaluate(conditions, operation: self) { failures in
             if failures.isEmpty {
                 // If there were no errors, we may proceed.
-                self.state = .Ready
+                self.state = .ready
             }
             else {
-                self.state = .Cancelled
+                self.state = .cancelled
                 self.finish(failures)
             }
         }
@@ -157,31 +157,31 @@ extension Operation {
 
 // MARK: - Public API
 
-extension Operation {
+extension OKOperation {
     
-    public func addObserver(observer: OperationObserver) {
-        assert(state < .Executing, "Cannot modify after execution has began.")
+    public func addObserver(_ observer: OperationObserver) {
+        assert(state < .executing, "Cannot modify after execution has began.")
         
         observers.append(observer)
     }
-    public func addCondition(condition: OperationCondition) {
-        assert(state < .EvaluatingConditions, "Cannot modify conditions after execution has begun.")
+    public func addCondition(_ condition: OperationCondition) {
+        assert(state < .evaluatingConditions, "Cannot modify conditions after execution has begun.")
         
         conditions.append(condition)
     }
-    public final func produceOperation(operation: NSOperation) {
+    public final func produceOperation(_ operation: Foundation.Operation) {
         for observer in observers {
             observer.operation(self, didProduceOperation: operation)
         }
     }
-    public final func cancelWithError(error: NSError? = nil) {
+    public final func cancelWithError(_ error: NSError? = nil) {
         if let error = error {
             internalErrors.append(error)
         }
         
-        state = .Cancelled
+        state = .cancelled
     }
-    public final func finishWithError(error: NSError?) {
+    public final func finishWithError(_ error: NSError?) {
         if let error = error {
             finish([error])
         }
@@ -189,7 +189,7 @@ extension Operation {
             finish()
         }
     }
-    public final func finish(errors: [NSError] = []) {
+    public final func finish(_ errors: [NSError] = []) {
         if !hasFinishedAlready {
             hasFinishedAlready = true
             
@@ -200,10 +200,10 @@ extension Operation {
                 observer.operationDidFinish(self)
             }
             
-            state = .Finished
+            state = .finished
         }
     }
-    public func finished(errors: [NSError]) {
+    public func finished(_ errors: [NSError]) {
         
     }
 }
@@ -212,9 +212,9 @@ extension Operation {
 
 // MARK: - Functions for Operation.State Comparable
 
-func <(lhs: Operation.State, rhs: Operation.State) -> Bool {
+func <(lhs: OKOperation.State, rhs: OKOperation.State) -> Bool {
     return lhs.rawValue < rhs.rawValue
 }
-func ==(lhs: Operation.State, rhs: Operation.State) -> Bool {
+func ==(lhs: OKOperation.State, rhs: OKOperation.State) -> Bool {
     return lhs.rawValue == rhs.rawValue
 }

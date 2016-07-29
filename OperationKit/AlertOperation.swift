@@ -8,10 +8,10 @@
 
 import UIKit
 
-public class AlertOperation: Operation {
+public class AlertOperation: OKOperation {
     // MARK: Properties
     
-    private let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .Alert)
+    private let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
     private let presentationContext: UIViewController?
     
     public var title: String? {
@@ -40,7 +40,7 @@ public class AlertOperation: Operation {
     public init(presentationContext: UIViewController? = nil) {
         
         if presentationContext == nil {
-            let viewController = UIApplication.sharedApplication().keyWindow?.rootViewController
+            let viewController = UIApplication.shared.keyWindow?.rootViewController
             
             if let vc = viewController as? UINavigationController {
                 self.presentationContext = vc.visibleViewController
@@ -68,7 +68,7 @@ public class AlertOperation: Operation {
         addCondition(MutuallyExclusive<UIViewController>())
     }
     
-    public func addAction(title: String, style: UIAlertActionStyle = .Default, handler: AlertOperation -> Void = { _ in }) {
+    public func addAction(_ title: String, style: UIAlertActionStyle = .default, handler: (AlertOperation) -> Void = { _ in }) {
         let action = UIAlertAction(title: title, style: style) { [weak self] _ in
             if let strongSelf = self {
                 handler(strongSelf)
@@ -87,12 +87,12 @@ public class AlertOperation: Operation {
             return
         }
         
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             if self.alertController.actions.isEmpty {
                 self.addAction("OK")
             }
             
-            presentationContext.presentViewController(self.alertController, animated: true, completion: nil)
+            presentationContext.present(self.alertController, animated: true, completion: nil)
         }
     }
 }

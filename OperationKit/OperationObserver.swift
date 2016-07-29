@@ -18,7 +18,7 @@ public protocol OperationObserver {
      
      - parameter operation: current Operation
      */
-    func operationDidStart(operation: Operation)
+    func operationDidStart(_ operation: Operation)
     
     /**
      Invoced when Operation.produceOperation is executed.
@@ -26,12 +26,12 @@ public protocol OperationObserver {
      - parameter operation:    current Operation
      - parameter newOperation: newOperation that `operation` produce.
      */
-    func operation(operation: Operation, didProduceOperation newOperation: NSOperation)
+    func operation(_ operation: Operation, didProduceOperation newOperation: Foundation.Operation)
     
     /**
      Invoce as an Operation finishes
      
      - parameter operation: current Operation
      */
-    func operationDidFinish(operation: Operation)
+    func operationDidFinish(_ operation: Operation)
 }
