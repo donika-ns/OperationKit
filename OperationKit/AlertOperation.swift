@@ -8,13 +8,13 @@
 
 import UIKit
 
-public class AlertOperation: OKOperation {
+open class AlertOperation: OKOperation {
     // MARK: Properties
     
-    private let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-    private let presentationContext: UIViewController?
+    fileprivate let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+    fileprivate let presentationContext: UIViewController?
     
-    public var title: String? {
+    open var title: String? {
         get {
             return alertController.title
         }
@@ -25,7 +25,7 @@ public class AlertOperation: OKOperation {
         }
     }
     
-    public var message: String? {
+    open var message: String? {
         get {
             return alertController.message
         }
@@ -68,7 +68,7 @@ public class AlertOperation: OKOperation {
         addCondition(MutuallyExclusive<UIViewController>())
     }
     
-    public func addAction(_ title: String, style: UIAlertActionStyle = .default, handler: (AlertOperation) -> Void = { _ in }) {
+    open func addAction(_ title: String, style: UIAlertActionStyle = .default, handler: @escaping (AlertOperation) -> Void = { _ in }) {
         let action = UIAlertAction(title: title, style: style) { [weak self] _ in
             if let strongSelf = self {
                 handler(strongSelf)
@@ -80,7 +80,7 @@ public class AlertOperation: OKOperation {
         alertController.addAction(action)
     }
     
-    override public func execute() {
+    override open func execute() {
         guard let presentationContext = presentationContext else {
             finish()
             

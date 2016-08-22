@@ -17,10 +17,10 @@ import Foundation
 class ExclusivityController {
     static let sharedExclusivityController = ExclusivityController()
     
-    private let serialQueue = DispatchQueue(label: "Operations.ExclusivityController")
-    private var operations: [String: [Operation]] = [:]
+    fileprivate let serialQueue = DispatchQueue(label: "Operations.ExclusivityController")
+    fileprivate var operations: [String: [Operation]] = [:]
     
-    private init() {
+    fileprivate init() {
         /*
             A private initializer effectively prevents any other part of the app
             from accidentally creating an instance.
@@ -53,7 +53,7 @@ class ExclusivityController {
     
     // MARK: Operation Management
     
-    private func noqueue_addOperation(_ operation: Operation, category: String) {
+    fileprivate func noqueue_addOperation(_ operation: Operation, category: String) {
         var operationsWithThisCategory = operations[category] ?? []
         
         if let last = operationsWithThisCategory.last {
@@ -65,7 +65,7 @@ class ExclusivityController {
         operations[category] = operationsWithThisCategory
     }
     
-    private func noqueue_removeOperation(_ operation: Operation, category: String) {
+    fileprivate func noqueue_removeOperation(_ operation: Operation, category: String) {
         let matchingOperations = operations[category]
         
         if var operationsWithThisCategory = matchingOperations,

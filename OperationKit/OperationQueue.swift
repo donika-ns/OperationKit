@@ -9,11 +9,11 @@
 import Foundation
 
 
-public class OKOperationQueue: OperationQueue {
+open class OKOperationQueue: OperationQueue {
     
     
     
-    public override func addOperation(_ op: Operation) {
+    open override func addOperation(_ op: Operation) {
         if let op = op as? OKOperation {
             
             let delegate = BlockObserver(
@@ -45,9 +45,9 @@ public class OKOperationQueue: OperationQueue {
             */
 
             let concurrencyCategories: [String] = op.conditions.flatMap { condition in
-                if !condition.dynamicType.isMutuallyExclusive { return nil }
+                if !type(of: condition).isMutuallyExclusive { return nil }
                 
-                return "\(condition.dynamicType)"
+                return "\(type(of: condition))"
             }
             
             if !concurrencyCategories.isEmpty {
@@ -72,7 +72,7 @@ public class OKOperationQueue: OperationQueue {
         super.addOperation(op)
     }
     
-    public override func addOperations(_ ops: [Operation], waitUntilFinished wait: Bool) {
+    open override func addOperations(_ ops: [Operation], waitUntilFinished wait: Bool) {
         /*
             The base implementation of this method does not call `addOperation()`,
             so we'll call it ourselves.

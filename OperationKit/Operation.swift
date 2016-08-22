@@ -10,7 +10,7 @@ import Foundation
 
 
 /// Abstract: 
-public class OKOperation: Operation {
+open class OKOperation: Operation {
     
     // MARK: - State Management
     
@@ -31,8 +31,8 @@ public class OKOperation: Operation {
             }
         }
     }
-    private var _state = State.initialized
-    private var state: State {
+    fileprivate var _state = State.initialized
+    fileprivate var state: State {
         get {
             return _state
         }
@@ -59,10 +59,10 @@ public class OKOperation: Operation {
     
     // MARK: - Properties
     
-    public private(set) var observers = [OperationObserver]()
-    public private(set) var conditions = [OperationCondition]()
-    private var internalErrors = [NSError]()
-    private var hasFinishedAlready = false
+    open fileprivate(set) var observers = [OperationObserver]()
+    open fileprivate(set) var conditions = [OperationCondition]()
+    fileprivate var internalErrors = [NSError]()
+    fileprivate var hasFinishedAlready = false
 }
 
 
@@ -71,7 +71,7 @@ public class OKOperation: Operation {
 
 extension OKOperation {
     
-    public override var isReady: Bool {
+    open override var isReady: Bool {
         switch state {
         case .pending:
             if super.isReady {
@@ -84,13 +84,13 @@ extension OKOperation {
         default: return false
         }
     }
-    public override var isExecuting: Bool {
+    open override var isExecuting: Bool {
         return state == .executing
     }
-    public override var isFinished: Bool {
+    open override var isFinished: Bool {
         return state == .finished
     }
-    public override var isCancelled: Bool {
+    open override var isCancelled: Bool {
         return state == .cancelled
     }
 }
@@ -112,17 +112,17 @@ extension OKOperation {
         
         execute()
     }
-    public func execute() {
-        print("\(self.dynamicType) must override `main()`.")
+    open func execute() {
+        print("\(type(of: self)) must override `main()`.")
         
         finish()
     }
-    public override func addDependency(_ op: Operation) {
+    open override func addDependency(_ op: Operation) {
         assert(state <= .executing, "Dependencies cannot be modified after execution has begun.")
         
         super.addDependency(op)
     }
-    public override func cancel() {
+    open override func cancel() {
         cancelWithError()
     }
 }
@@ -135,7 +135,7 @@ extension OKOperation {
     func willEnqueue() {
         state = .pending
     }
-    private func evaluateConditions() {
+    fileprivate func evaluateConditions() {
         assert(state == .pending, "evaluateConditions() was called out-of-order")
         
         state = .evaluatingConditions
@@ -203,7 +203,7 @@ extension OKOperation {
             state = .finished
         }
     }
-    public func finished(_ errors: [NSError]) {
+    open func finished(_ errors: [NSError]) {
         
     }
 }

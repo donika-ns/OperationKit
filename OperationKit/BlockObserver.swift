@@ -13,11 +13,11 @@ import Foundation
  */
 public struct BlockObserver {
     
-    private let startHandler: ((Operation) -> Void)?
-    private let produceHandler: ((operation: Operation, newOperation: Foundation.Operation) -> Void)?
-    private let finishHandler: ((operation: Operation) -> Void)?
+    fileprivate let startHandler: ((Operation) -> Void)?
+    fileprivate let produceHandler: ((_ operation: Operation, _ newOperation: Foundation.Operation) -> Void)?
+    fileprivate let finishHandler: ((_ operation: Operation) -> Void)?
     
-    public init(startHandler: ((Operation) -> Void)? = nil, produceHandler: ((Operation, Foundation.Operation) -> Void)? = nil, finishHandler: ((operation: Operation) -> Void)? = nil) {
+    public init(startHandler: ((Operation) -> Void)? = nil, produceHandler: ((Operation, Foundation.Operation) -> Void)? = nil, finishHandler: ((_ operation: Operation) -> Void)? = nil) {
         
         self.startHandler   = startHandler
         self.produceHandler = produceHandler
@@ -34,9 +34,9 @@ extension BlockObserver: OperationObserver {
         startHandler?(operation)
     }
     public func operation(_ operation: Operation, didProduceOperation newOperation: Foundation.Operation) {
-        produceHandler?(operation: operation, newOperation: newOperation)
+        produceHandler?(operation, newOperation)
     }
     public func operationDidFinish(_ operation: Operation) {
-        finishHandler?(operation: operation)
+        finishHandler?(operation)
     }
 }

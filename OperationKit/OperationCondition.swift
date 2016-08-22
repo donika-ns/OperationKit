@@ -39,7 +39,7 @@ public enum OperationConditionResult {
 
 struct OperationConditionEvaluator {
     
-    static func evaluate(_ conditions: [OperationCondition], operation: Operation, completion: ([NSError]) -> Void) {
+    static func evaluate(_ conditions: [OperationCondition], operation: Operation, completion: @escaping ([NSError]) -> Void) {
         // Check conditions
         let conditionGroup = DispatchGroup()
         
